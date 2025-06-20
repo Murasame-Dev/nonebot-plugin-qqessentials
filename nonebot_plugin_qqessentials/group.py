@@ -1,6 +1,6 @@
 from nonebot import on_command, get_plugin_config, on_request, on_message
 from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, MessageSegment, GroupRequestEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, MessageSegment, GroupRequestEvent, GroupMessageEvent, GROUP_ADMIN, GROUP_OWNER
 from nonebot.permission import SUPERUSER
 from nonebot.log import logger
 from .config import Config
@@ -136,7 +136,7 @@ async def handle_group_request_notify(bot: Bot, event: GroupRequestEvent):
 # 3. 处理加群请求功能
 
 # 3.1 同意加群请求功能
-approve_group_request = on_command("同意加群请求", priority=5)
+approve_group_request = on_command("同意加群请求", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 @approve_group_request.handle()
 async def handle_approve_group_request(bot: Bot, event: MessageEvent):
@@ -144,13 +144,6 @@ async def handle_approve_group_request(bot: Bot, event: MessageEvent):
     # 检查是否为目标群
     if not isinstance(event, GroupMessageEvent) or event.group_id not in config.group_request_notify_target:
         return
-    
-    # 检查权限（管理员或SUPERUSER）
-    is_admin = await check_group_admin_permission(bot, event)
-    is_superuser = await SUPERUSER(bot, event)
-    
-    if not (is_admin or is_superuser):
-        return  # 权限不足时不输出消息，直接返回
     
     # 检查是否引用了消息
     if not hasattr(event, 'reply') or not event.reply:
@@ -196,7 +189,7 @@ async def handle_approve_group_request(bot: Bot, event: MessageEvent):
 
 
 # 3.2 拒绝加群请求功能
-reject_group_request = on_command("拒绝加群请求", priority=5)
+reject_group_request = on_command("拒绝加群请求", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 @reject_group_request.handle()
 async def handle_reject_group_request(bot: Bot, event: MessageEvent):
@@ -204,13 +197,6 @@ async def handle_reject_group_request(bot: Bot, event: MessageEvent):
     # 检查是否为目标群
     if not isinstance(event, GroupMessageEvent) or event.group_id not in config.group_request_notify_target:
         return
-    
-    # 检查权限（管理员或SUPERUSER）
-    is_admin = await check_group_admin_permission(bot, event)
-    is_superuser = await SUPERUSER(bot, event)
-    
-    if not (is_admin or is_superuser):
-        return  # 权限不足时不输出消息，直接返回
     
     # 检查是否引用了消息
     if not hasattr(event, 'reply') or not event.reply:
@@ -382,12 +368,11 @@ async def handle_kick_user(bot: Bot, event: MessageEvent):
 
 
 # 5. 禁言/塞口球功能
-ban_user = on_command("禁言", aliases={"塞口球"}, priority=5, permission=SUPERUSER)
+ban_user = on_command("禁言", aliases={"塞口球"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 @ban_user.handle()
 async def handle_ban_user(bot: Bot, event: MessageEvent):
     """禁言/塞口球用户处理器"""
-    # 只允许SUPERUSER使用（已在命令注册时限制权限）
     
     # 获取参数（直接从消息中提取，去掉命令部分）
     message_text = str(event.get_message()).strip()
@@ -514,12 +499,11 @@ async def handle_ban_user(bot: Bot, event: MessageEvent):
 
 
 # 6. 解禁功能
-unban_user = on_command("解禁", priority=5, permission=SUPERUSER)
+unban_user = on_command("解禁", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 @unban_user.handle()
 async def handle_unban_user(bot: Bot, event: MessageEvent):
     """解禁用户处理器"""
-    # 只允许SUPERUSER使用（已在命令注册时限制权限）
     
     # 获取参数（直接从消息中提取，去掉命令部分）
     message_text = str(event.get_message()).strip()
@@ -619,12 +603,11 @@ async def handle_unban_user(bot: Bot, event: MessageEvent):
 
 
 # 7. 全群禁言功能
-ban_all = on_command("全群禁言", aliases={"肃静"}, priority=5, permission=SUPERUSER)
+ban_all = on_command("全群禁言", aliases={"肃静"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 @ban_all.handle()
 async def handle_ban_all(bot: Bot, event: MessageEvent):
     """全群禁言处理器"""
-    # 只允许SUPERUSER使用（已在命令注册时限制权限）
     
     # 检查是否在群聊中
     if not isinstance(event, GroupMessageEvent):
@@ -646,12 +629,11 @@ async def handle_ban_all(bot: Bot, event: MessageEvent):
 
 
 # 8. 全群解禁功能
-unban_all = on_command("全群解禁", aliases={"大赦天下"}, priority=5, permission=SUPERUSER)
+unban_all = on_command("全群解禁", aliases={"大赦天下"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 @unban_all.handle()
 async def handle_unban_all(bot: Bot, event: MessageEvent):
     """全群解禁处理器"""
-    # 只允许SUPERUSER使用（已在命令注册时限制权限）
     
     # 检查是否在群聊中
     if not isinstance(event, GroupMessageEvent):
@@ -1132,7 +1114,7 @@ def exact_match_rule(*keywords):
         return message_text in keywords
     return _rule
 
-set_essence = on_message(rule=exact_match_rule("设置精华消息", "设精"), priority=5, block=True)
+set_essence = on_message(rule=exact_match_rule("设置精华消息", "设精"), priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, block=True)
 
 @set_essence.handle()
 async def handle_set_essence(bot: Bot, event: MessageEvent):
@@ -1140,14 +1122,6 @@ async def handle_set_essence(bot: Bot, event: MessageEvent):
     # 检查权限（管理员、群主或SUPERUSER）
     if not isinstance(event, GroupMessageEvent):
         logger.warning(f"设置精华消息：不在群聊中，用户：{event.user_id}")
-        return
-    
-    # 检查用户权限
-    is_admin = await check_group_admin_permission(bot, event)
-    is_superuser = await SUPERUSER(bot, event)
-    
-    if not (is_admin or is_superuser):
-        logger.warning(f"设置精华消息：权限不足，用户：{event.user_id}，群号：{event.group_id}")
         return
     
     # 检查是否引用了消息
@@ -1175,7 +1149,7 @@ async def handle_set_essence(bot: Bot, event: MessageEvent):
 
 
 # 15. 取消精华消息功能
-delete_essence = on_message(rule=exact_match_rule("取消精华消息", "取精"), priority=5, block=True)
+delete_essence = on_message(rule=exact_match_rule("取消精华消息", "取精"), priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, block=True)
 
 @delete_essence.handle()
 async def handle_delete_essence(bot: Bot, event: MessageEvent):
@@ -1183,14 +1157,6 @@ async def handle_delete_essence(bot: Bot, event: MessageEvent):
     # 检查权限（管理员、群主或SUPERUSER）
     if not isinstance(event, GroupMessageEvent):
         logger.warning(f"取消精华消息：不在群聊中，用户：{event.user_id}")
-        return
-    
-    # 检查用户权限
-    is_admin = await check_group_admin_permission(bot, event)
-    is_superuser = await SUPERUSER(bot, event)
-    
-    if not (is_admin or is_superuser):
-        logger.warning(f"取消精华消息：权限不足，用户：{event.user_id}，群号：{event.group_id}")
         return
     
     # 检查是否引用了消息
