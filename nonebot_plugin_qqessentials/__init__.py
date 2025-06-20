@@ -8,6 +8,7 @@ from . import group as group
 
 from .config import Config
 
+__version__ = "0.1.0"
 __plugin_meta__ = PluginMetadata(
     name="QQEssentials",
     description="一个能够满足你很多需求的基础插件！",
