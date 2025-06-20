@@ -3,12 +3,14 @@
 <div align="center">
 
 <a href="https://v2.nonebot.dev/store">
-  <img src="https://raw.githubusercontent.com/A-kirami/nonebot-plugin-template/resources/nbp_logo.png" width="180" height="180" alt="NoneBotPluginLogo">
+  <img src="./nbp_logo_qqess.png" width="180" height="180" alt="NoneBotPluginLogo">
 </a>
 
 <p>
   <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/template/plugin.svg" alt="NoneBotPluginText">
 </p>
+
+~~*别嘲笑我的构图了，我第一次做(T_T)*~~
 
 # nonebot-plugin-QQEssentials
 
@@ -159,5 +161,7 @@ TG群组：[点此加入](https://t.me/LoveMurasame)
 ## 📝 更新日志
 
 芝士刚刚发布的插件，还没有更新日志的说 qwq~
+
+
 
 
