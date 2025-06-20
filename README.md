@@ -29,6 +29,9 @@ _✨ 一个能够满足你很多需求的基础插件！ ✨_
 
 ## 💿 安装
 
+> [!IMPORTANT]
+> 此插件只支持 nonebot-adapter-onebot 驱动器
+
 以下提到的方法 任选**其一** 即可
 
 <details open>
