@@ -25,4 +25,4 @@ includes = []
 
 [tool.pdm.version]
 source = "file"
-path = "nonebot_plugin_example/__init__.py"
+path = "nonebot_plugin_qqessentials/__init__.py"
