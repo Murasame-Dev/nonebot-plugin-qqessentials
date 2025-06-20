@@ -1,0 +1,28 @@
+[project]
+name = "nonebot-plugin-qqessentials"
+dynamic = ["version"]
+description = "A basic plugin that meets a lot of your needs!"
+authors = [{ name = "Murasame", email = "congyu@sbhfy.cn" }]
+dependencies = [
+    "nonebot2>=2.4.1"
+]
+requires-python = ">=3.9,<4.0"
+readme = "README.md"
+license = { text = "MIT" }
+
+[project.urls]
+homepage = "https://github.com/LeiSureLyYrsc/nonebot-plugin-template"
+
+[dependency-groups]
+dev = []
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm.build]
+includes = []
+
+[tool.pdm.version]
+source = "file"
+path = "nonebot_plugin_example/__init__.py"
