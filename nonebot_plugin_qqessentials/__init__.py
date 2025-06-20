@@ -10,8 +10,10 @@ from .config import Config
 
 __plugin_meta__ = PluginMetadata(
     name="QQEssentials",
-    description="QQ机器人基础功能插件",
-    usage="提供机器人信息查询、个性签名修改、头像修改、状态设置等功能",
+    description="一个能够满足你很多需求的基础插件！",
+    usage="目前支持:点赞，撤回，设精，禁言，发送消息等更多操作，后续会持续更新！",
+    type="application",
+    homepage="https://github.com/Murasame-Dev/nonebot-plugin-qqessentials",
     config=Config,
 )
 

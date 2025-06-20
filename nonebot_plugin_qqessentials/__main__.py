@@ -624,7 +624,8 @@ async def handle_help(bot: Bot, event: MessageEvent):
 🏷️ 群组管理：[展开请用: /群组管理帮助]
 🔧 状态设置：[展开请用: /状态帮助]
 ━━━━━━━━━━━━━━━━
-⚠️ 注意：管理功能大部分仅限超级用户使用"""
+⚠️ 注意：管理功能大部分仅限超级用户使用
+Ciallo～(∠・ω< )⌒★"""
     
     await help_command.send(help_text)
 
@@ -643,7 +644,8 @@ async def handle_help_msg(bot: Bot, event: MessageEvent):
   • 删除好友功能默认关闭，需配置启用
   • 支持发送文本消息到指定私聊或群聊
 ━━━━━━━━━━━━━━━━
-👈 返回主菜单：/QQEss帮助"""
+👈 返回主菜单：/QQEss帮助
+Ciallo～(∠・ω< )⌒★"""
     
     await help_msg_command.send(help_text)
 
@@ -679,7 +681,8 @@ async def handle_help_group(bot: Bot, event: MessageEvent):
   • 支持@用户或直接输入QQ号
   • 私聊中使用需要提供群号参数
 ━━━━━━━━━━━━━━━━
-👈 返回主菜单：/QQEss帮助"""
+👈 返回主菜单：/QQEss帮助
+Ciallo～(∠・ω< )⌒★"""
 
     await help_group_command.send(help_text)
 
@@ -710,6 +713,7 @@ async def handle_help_status(bot: Bot, event: MessageEvent):
   • 支持设置电量状态（1-100）
   • 支持数字编号快速设置
 ━━━━━━━━━━━━━━━━
-👈 返回主菜单：/QQEss帮助"""
+👈 返回主菜单：/QQEss帮助
+Ciallo～(∠・ω< )⌒★"""
     
     await help_status_command.send(help_text)

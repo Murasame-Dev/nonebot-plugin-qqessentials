@@ -10,66 +10,20 @@
   <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/template/plugin.svg" alt="NoneBotPluginText">
 </p>
 
-# nonebot-plugin-example
+# nonebot-plugin-QQEssentials
 
-_✨ NoneBot 插件简单描述 ✨_
+_✨ 一个能够满足你很多需求的基础插件！ ✨_
 
-<img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="python">
-<a href="https://pdm.fming.dev">
-  <img src="https://img.shields.io/badge/pdm-managed-blueviolet" alt="pdm-managed">
-</a>
-<a href="https://wakatime.com/badge/user/b61b0f9a-f40b-4c82-bc51-0a75c67bfccf/project/f4778875-45a4-4688-8e1b-b8c844440abb">
-  <img src="https://wakatime.com/badge/user/b61b0f9a-f40b-4c82-bc51-0a75c67bfccf/project/f4778875-45a4-4688-8e1b-b8c844440abb.svg" alt="wakatime">
-</a>
-
-<br />
-
-<!-- <a href="https://pydantic.dev">
-  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v1.json" alt="Pydantic Version 1" >
-</a> -->
-
-<!-- <a href="https://pydantic.dev">
-  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json" alt="Pydantic Version 2" >
-</a> -->
-
-<a href="https://pydantic.dev">
-  <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/template/pyd-v1-or-v2.json" alt="Pydantic Version 1 Or 2" >
-</a>
-<a href="./LICENSE">
-  <img src="https://img.shields.io/github/license/lgc-NB2Dev/nonebot-plugin-example.svg" alt="license">
-</a>
-<a href="https://pypi.python.org/pypi/nonebot-plugin-example">
-  <img src="https://img.shields.io/pypi/v/nonebot-plugin-example.svg" alt="pypi">
-</a>
-<a href="https://pypi.python.org/pypi/nonebot-plugin-example">
-  <img src="https://img.shields.io/pypi/dm/nonebot-plugin-example" alt="pypi download">
-</a>
-
-<br />
-
-<a href="https://registry.nonebot.dev/plugin/nonebot-plugin-example:nonebot_plugin_example">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgc2333.top%2Fplugin%2Fnonebot-plugin-example" alt="NoneBot Registry">
-</a>
-<a href="https://registry.nonebot.dev/plugin/nonebot-plugin-example:nonebot_plugin_example">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgc2333.top%2Fplugin-adapters%2Fnonebot-plugin-example" alt="Supported Adapters">
-</a>
+[![python3](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 </div>
 
-这是一个 nonebot2 插件项目的模板库, 你可以直接使用本模板创建你的 nonebot2 插件项目的仓库
-
-模板库使用方法:
-
-1. 点击仓库中的 `Use this template` 按钮, 输入仓库名与描述, 点击 `Create repository from template` 创建仓库
-2. 全局替换 `nonebot-plugin-example` 为插件名;  
-   全局替换 `nonebot_plugin_example` 为包名;  
-   修改 python 徽标中的版本为你插件的运行所需版本;  
-   替换 WakaTime 的徽标
-3. 修改 `README.md` 中的插件名和插件描述, 并在下方填充相应的内容
-
 ## 📖 介绍
 
-这里是插件的详细介绍部分
+这是一个强大的QQ基础插件，覆盖了群聊管理，好友互动，Bot个人信息状态修改等功能，让你只需要使用指令就能解决很多繁琐的操作！
+
+项目的发展少不了你们的 Issue，请对此插件提出意见或功能请求，我将尽可能实现你们的要求！
 
 ## 💿 安装
 
@@ -80,7 +34,7 @@ _✨ NoneBot 插件简单描述 ✨_
 在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
 
 ```bash
-nb plugin install nonebot-plugin-example
+nb plugin install nonebot-plugin-qqessentials
 ```
 
 </details>
@@ -93,7 +47,7 @@ nb plugin install nonebot-plugin-example
 <summary>pip</summary>
 
 ```bash
-pip install nonebot-plugin-example
+pip install nonebot-plugin-qqessentials
 ```
 
 </details>
@@ -101,7 +55,7 @@ pip install nonebot-plugin-example
 <summary>pdm</summary>
 
 ```bash
-pdm add nonebot-plugin-example
+pdm add nonebot-plugin-qqessentials
 ```
 
 </details>
@@ -109,7 +63,7 @@ pdm add nonebot-plugin-example
 <summary>poetry</summary>
 
 ```bash
-poetry add nonebot-plugin-example
+poetry add nonebot-plugin-qqessentials
 ```
 
 </details>
@@ -117,7 +71,7 @@ poetry add nonebot-plugin-example
 <summary>conda</summary>
 
 ```bash
-conda install nonebot-plugin-example
+conda install nonebot-plugin-qqessentials
 ```
 
 </details>
@@ -125,7 +79,7 @@ conda install nonebot-plugin-example
 <summary>uv</summary>
 
 ```bash
-uv add nonebot-plugin-example
+uv add nonebot-plugin-qqessentials
 ```
 
 </details>
@@ -136,7 +90,7 @@ uv add nonebot-plugin-example
 [tool.nonebot]
 plugins = [
     # ...
-    "nonebot_plugin_example"
+    "nonebot-plugin-qqessentials"
 ]
 ```
 
@@ -144,36 +98,66 @@ plugins = [
 
 ## ⚙️ 配置
 
-在 nonebot2 项目的 `.env` 文件中添加下表中的必填配置
+env 配置示例，变量后面为默认配置:
 
-| 配置项   | 必填  | 默认值 | 说明   |
-|:-----:|:---:|:---:|:----:|
-| 配置项 1 | 是   | 无   | 配置说明 |
-| 配置项 2 | 否   | 无   | 配置说明 |
+```.env
+# 超级用户，必须设置，不然大部分指令无法使用
+配置多个超级用户:["123456","234567"]
+superusers=[""]
+
+# 命令头，可选配置，默认为 "/"
+command_start=["/"]
+
+# 头像上传超时时间（秒）
+avatar_upload_timeout=30
+
+# 默认点赞次数，SVIP可考虑修改到20次
+default_like_times=10
+
+# 删除好友功能开关（默认关闭，安全考虑）
+enable_delete_friend=False
+
+# 加群请求信息推送开关（默认关闭）
+enable_group_request_notify=False
+
+# 加群请求推送目标群号列表（只有这些群的加群请求会推送到对应群）
+需要 enable_group_request_notify=True
+多个群号用逗号分隔，如：["123456789","987654321"]
+group_request_notify_target=[]
+```
 
 ## 🎉 使用
 
-### 指令表
+### 主要指令
 
-| 指令   | 权限  | 需要@ | 范围  | 说明   |
-|:----:|:---:|:---:|:---:|:----:|
-| 指令 1 | 主人  | 否   | 私聊  | 指令说明 |
-| 指令 2 | 群员  | 是   | 群聊  | 指令说明 |
+带 **"/"** 则需要配置 **COMMAND_START** (默认为 "/")   
+带 **"*"** 则为 **SUPERUSERS** 才可以触发   
+带  **"&"** 则为 **群管理，SUPERUSERS** 才可以触发
+
+- *`/QQEss帮助` - 主要帮助，有多个分页
+- *`/状态设置` - 机器人在线状态设置，支持40+种个性状态，详情请见 `/状态帮助`
+- *`/发送私聊 群消息 123456` - 详情请见 `/消息发送帮助`
+- %`/同意加群请求 or /拒绝加群请求 [理由]` - 处理群聊的加群请求，需要配置 `group_request_notify_target`
+- %`设精 取精` - 对消息进行精华设置/取消操作
+- `戳我` - 戳戳你的❤
+- `戳@Murasame` - 戳戳丛雨酱❤Ciallo～(∠・ω< )⌒★(此处指的是你在群内@的对象)
 
 ### 效果图
 
-如果有效果图的话
+![Ciallo～(∠・ω< )⌒★](./Ciallo~.png)
 
 ## 📞 联系
 
 TG群组：[点此加入](https://t.me/LoveMurasame)
-吹水群：[1049319982](https://qm.qq.com/q/DfTsIDXuc8)
+柚子厨群：[1049319982](https://qm.qq.com/q/DfTsIDXuc8)
 邮箱：<congyu@sbhfy.cn>
 
 ## 💡 鸣谢
 
-如果有要鸣谢的人的话
+[NapCat](https://napneko.github.io/) - 高强度研究其接口实现不同功能
 
 ## 📝 更新日志
 
 芝士刚刚发布的插件，还没有更新日志的说 qwq~
+
+

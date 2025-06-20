@@ -11,7 +11,7 @@ readme = "README.md"
 license = { text = "MIT" }
 
 [project.urls]
-homepage = "https://github.com/LeiSureLyYrsc/nonebot-plugin-template"
+homepage = "https://github.com/Murasame-Dev/nonebot-plugin-qqessentials"
 
 [dependency-groups]
 dev = []
