@@ -122,6 +122,8 @@ default_like_times=10
 # 删除好友功能开关（默认关闭，安全考虑）
 enable_delete_friend=False
 
+# === 加群请求功能配置 ===
+
 # 加群请求信息推送开关（默认关闭）
 enable_group_request_notify=False
 
@@ -129,6 +131,26 @@ enable_group_request_notify=False
 需要 enable_group_request_notify=True
 多个群号用逗号分隔，如：["123456789","987654321"]
 group_request_notify_target=[]
+
+# === 随机禁言功能配置 ===
+    
+# 随机禁言功能开关（默认开启）
+# 环境变量：ENABLE_RANDOM_BAN
+enable_random_ban=True
+    
+# 随机口球/我要口球的时间范围（格式："最小时间-最大时间"，单位：秒，示例："5-60"）
+# 环境变量：RANDOM_BAN_TIME_RANGE
+random_ban_time_range="5-60"
+    
+# 禅定/精致睡眠的禁言时间（秒，默认36000秒=10小时）
+# 环境变量：LONG_BAN_TIME
+long_ban_time=36000
+    
+# === 词库功能配置 ===
+    
+# 词条添加等待超时时间（秒，默认60秒）
+# 环境变量：LEXICON_TIMEOUT
+lexicon_timeout=60
 ```
 
 ## 🎉 使用
