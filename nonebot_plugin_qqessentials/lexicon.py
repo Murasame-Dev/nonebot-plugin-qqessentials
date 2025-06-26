@@ -1,7 +1,7 @@
 import json
 import os
 import asyncio
-import aiohttp
+import httpx
 import hashlib
 from datetime import datetime
 from typing import Dict, List, Optional, Union
@@ -104,17 +104,17 @@ class LexiconManager:
                     return None
             
             # 网络文件，下载
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    if response.status == 200:
-                        content = await response.read()
-                        with open(file_path, 'wb') as f:
-                            f.write(content)
-                        logger.info(f"成功下载媒体文件: {filename}")
-                        return filename
-                    else:
-                        logger.error(f"下载媒体文件失败，状态码: {response.status}")
-                        return None
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url)
+                if response.status_code == 200:
+                    content = response.content
+                    with open(file_path, 'wb') as f:
+                        f.write(content)
+                    logger.info(f"成功下载媒体文件: {filename}")
+                    return filename
+                else:
+                    logger.error(f"下载媒体文件失败，状态码: {response.status_code}")
+                    return None
         except Exception as e:
             logger.error(f"下载媒体文件时出错: {e}")
             return None
