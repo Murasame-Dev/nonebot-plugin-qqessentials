@@ -456,7 +456,7 @@ async def handle_delete_msg(bot: Bot, event: MessageEvent):
     if event.message_id:
         try:
             # 连同命令一起删掉
-            await bot.delete_msg(message_id=msg_id)
+            await bot.delete_msg(message_id=event.message_id)
         except:
             pass
     # 检查是否引用了消息
