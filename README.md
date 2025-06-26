@@ -2,19 +2,17 @@
 
 <div align="center">
 
-<a href="https://v2.nonebot.dev/store">
-  <img src="./kawaii.jpg" alt="NoneBotPluginLogo">
+<a href="https://x.com/uoouchan">
+  <img src="./kawaii.jpg" alt="KawaiiMurasame">
 </a>
 
 <p>
   <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/template/plugin.svg" alt="NoneBotPluginText">
 </p>
 
-<p align="center">
 这些可爱的丛雨酱是来自<a href="https://x.com/uoouchan">@uoouchan</a>的！<br>
 これらの可愛いムラサメちゃんは<a href="https://x.com/uoouchan">@uoouchan</a>さんからのものです！<br>
 These adorable Murasame-chan are from <a href="https://x.com/uoouchan">@uoouchan</a>! 
-</p>
 
 # nonebot-plugin-QQEssentials
 
