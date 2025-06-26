@@ -7,12 +7,12 @@ from .config import Config
 # 创建配置实例
 config = get_plugin_config(Config)
 
-# 随机禁言命令匹配器
+# 1.随机禁言命令匹配器 L16
 random_ban_matcher = on_keyword({"随机口球", "我要口球"}, priority=10, block=True)
-
-# 禅定命令匹配器
+# 2.禅定命令匹配器 L50
 meditation_matcher = on_keyword({"禅定", "精致睡眠"}, priority=10, block=True)
 
+# 1
 @random_ban_matcher.handle()
 async def handle_random_ban(bot: Bot, event: GroupMessageEvent):
     """处理随机禁言命令"""
@@ -46,6 +46,7 @@ async def handle_random_ban(bot: Bot, event: GroupMessageEvent):
     except Exception as e:
         logger.error(f"随机禁言功能执行失败: {e}")
 
+# 2
 @meditation_matcher.handle()
 async def handle_meditation(bot: Bot, event: GroupMessageEvent):
     """处理禅定命令"""

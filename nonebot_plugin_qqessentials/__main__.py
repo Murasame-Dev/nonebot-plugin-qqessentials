@@ -11,10 +11,53 @@ from .config import Config
 
 # 创建配置实例
 config = get_plugin_config(Config)
+# 3. 存储等待上传头像的用户
+waiting_avatar_users: Dict[int, bool] = {}
+# 6. 戳一戳功能
+# 自定义规则：匹配"戳我"（不需要指令头）
+async def poke_me_rule(event: MessageEvent) -> bool:
+    message_text = str(event.get_message()).strip()
+    return message_text == "戳我"
 
-# 1. 机器人信息查询
+# 自定义规则：匹配"戳"开头的消息（不需要指令头）
+async def poke_cmd_rule(event: MessageEvent) -> bool:
+    # 获取纯文本内容
+    plain_text = event.get_plaintext().strip()
+    
+    # 检查是否有@某人的消息段
+    has_at = any(seg.type == "at" for seg in event.message)
+    
+    # 匹配各种"戳"的情况
+    if plain_text == "戳":
+        return True
+    if plain_text.startswith("戳 "):
+        return True
+    if plain_text == "戳" and has_at:
+        return True
+    if plain_text.startswith("戳 ") and has_at:
+        return True
+    
+    return False
+
+
+
+# 1. 机器人信息查询 L61
 robot_info = on_command("机器人信息", aliases={"机器人状态", "bot信息"}, priority=5, permission=SUPERUSER)
+# 2. 修改个性签名 L100
+modify_signature = on_command("修改个性签名", priority=5, permission=SUPERUSER)
+# 3. 修改头像功能 L133
+modify_avatar = on_command("修改头像", priority=5, permission=SUPERUSER)
+# 4. 在线状态设置 L371(主要) L208(我也不知道为什么要把这么长玩意写一起)
+status_setting = on_command("状态设置", priority=5, permission=SUPERUSER)
+# 5. 消息撤回功能 L489
+delete_msg = on_command("撤回", aliases={"撤"}, priority=5, permission=SUPERUSER)
+# 6. 戳一戳功能 L510
+poke_me = on_message(rule=poke_me_rule, priority=5)
+poke_cmd = on_message(rule=poke_cmd_rule, priority=5)
 
+
+
+# 1
 @robot_info.handle()
 async def handle_robot_info(bot: Bot, event: MessageEvent):
     """获取机器人基本信息"""
@@ -52,9 +95,8 @@ async def handle_robot_info(bot: Bot, event: MessageEvent):
         await robot_info.send(f"❌ 获取机器人信息失败：{str(e)}")
 
 
-# 2. 修改个性签名
-modify_signature = on_command("修改个性签名", priority=5, permission=SUPERUSER)
 
+# 2
 @modify_signature.handle()
 async def handle_modify_signature(bot: Bot, event: MessageEvent, state: T_State):
     """修改个性签名处理器"""
@@ -86,12 +128,8 @@ async def handle_modify_signature(bot: Bot, event: MessageEvent, state: T_State)
             await modify_signature.send(f"❌ 修改个性签名失败：{error_msg}")
 
 
-# 3. 修改头像功能
-modify_avatar = on_command("修改头像", priority=5, permission=SUPERUSER)
 
-# 存储等待上传头像的用户
-waiting_avatar_users: Dict[int, bool] = {}
-
+# 3
 @modify_avatar.handle()
 async def handle_modify_avatar(bot: Bot, event: MessageEvent, matcher: Matcher):
     """修改头像处理器"""
@@ -166,10 +204,8 @@ async def handle_modify_avatar(bot: Bot, event: MessageEvent, matcher: Matcher):
     asyncio.create_task(cleanup_timeout())
 
 
-# 4. 在线状态设置
-status_setting = on_command("状态设置", priority=5, permission=SUPERUSER)
 
-# 可用的在线状态 - 按分类组织
+# 4.可用的在线状态 - 按分类组织
 ONLINE_STATUS_MAP = {
     # 基础状态
     "1": ({"status": 10, "ext_status": 0, "battery_status": 0}, "我在线上"),
@@ -331,6 +367,7 @@ STATUS_NAME_TO_KEY = {
     "我的电量50%": "50"
 }
 
+# 4
 @status_setting.handle()
 async def handle_status_setting(bot: Bot, event: MessageEvent):
     """处理状态设置"""
@@ -447,9 +484,8 @@ async def handle_status_setting(bot: Bot, event: MessageEvent):
         await status_setting.send(f"❌ 设置在线状态失败：{str(e)}")
 
 
-# 5. 消息撤回功能
-delete_msg = on_command("撤回", aliases={"撤"}, priority=5, permission=SUPERUSER)
 
+# 5
 @delete_msg.handle()
 async def handle_delete_msg(bot: Bot, event: MessageEvent):
     """处理消息撤回 - 撤回被引用消息和源消息"""
@@ -469,35 +505,8 @@ async def handle_delete_msg(bot: Bot, event: MessageEvent):
             logger.error(f"消息撤回失败: {e}")
             return
 
-# 6. 戳一戳功能
-# 自定义规则：匹配"戳我"（不需要指令头）
-async def poke_me_rule(event: MessageEvent) -> bool:
-    message_text = str(event.get_message()).strip()
-    return message_text == "戳我"
 
-# 自定义规则：匹配"戳"开头的消息（不需要指令头）
-async def poke_cmd_rule(event: MessageEvent) -> bool:
-    # 获取纯文本内容
-    plain_text = event.get_plaintext().strip()
-    
-    # 检查是否有@某人的消息段
-    has_at = any(seg.type == "at" for seg in event.message)
-    
-    # 匹配各种"戳"的情况
-    if plain_text == "戳":
-        return True
-    if plain_text.startswith("戳 "):
-        return True
-    if plain_text == "戳" and has_at:
-        return True
-    if plain_text.startswith("戳 ") and has_at:
-        return True
-    
-    return False
-
-poke_me = on_message(rule=poke_me_rule, priority=5)
-poke_cmd = on_message(rule=poke_cmd_rule, priority=5)
-
+# 6
 @poke_me.handle()
 async def handle_poke_me(bot: Bot, event: MessageEvent):
     """处理戳我功能 - 戳自己"""
@@ -577,131 +586,3 @@ async def handle_poke_cmd(bot: Bot, event: MessageEvent):
         logger.error(f"戳一戳失败: {e}")
         # 失败也不发送错误消息，保持静默
         pass
-
-
-# 添加帮助命令
-help_command = on_command("QQEss帮助", aliases={"qqess帮助"}, priority=10, permission=SUPERUSER)
-help_msg_command = on_command("消息发送帮助", priority=10, permission=SUPERUSER)
-help_group_command = on_command("群组管理帮助", priority=10, permission=SUPERUSER)
-help_status_command = on_command("状态帮助", priority=10, permission=SUPERUSER)
-
-@help_command.handle()
-async def handle_help(bot: Bot, event: MessageEvent):
-    """显示帮助信息主页"""
-    help_text = """🤖 QQ机器人功能列表
-━━━━━━━━━━━━━━━━
-📋 基础功能：
-  └ /机器人信息 - 查看机器人基本信息
-
-✏️ 个人设置：
-  ├ /修改个性签名 内容 - 修改个性签名
-  ├ /修改头像 - 修改QQ头像
-  └ /状态设置 [参数] - 设置在线状态
-
-🗑️ 消息管理：
-  └ /撤回 或 /撤 - 引用消息回复撤回（同时撤回被引用消息和指令消息）
-
-🎯 互动功能：
-  ├ 戳我 - 戳自己（无需指令头）
-  ├ 戳 - 戳自己（无需指令头）
-  ├ 戳 QQ号 - 戳指定QQ号（无需指令头）
-  ├ 戳@某人 - 戳@的用户（无需指令头）
-  └ 赞我 - 点赞功能（无需指令头，需要是好友）
-
-💬 消息发送：[展开请用: /消息发送帮助]
-🏷️ 群组管理：[展开请用: /群组管理帮助]
-🔧 状态设置：[展开请用: /状态帮助]
-━━━━━━━━━━━━━━━━
-⚠️ 注意：管理功能大部分仅限超级用户使用
-Ciallo～(∠・ω< )⌒★"""
-    
-    await help_command.send(help_text)
-
-@help_msg_command.handle()
-async def handle_help_msg(bot: Bot, event: MessageEvent):
-    """显示消息发送功能帮助"""
-    help_text = """💬 消息发送功能详细说明
-━━━━━━━━━━━━━━━━
-📤 发送功能：
-  ├ /发送私聊消息 QQ号 内容 - 发送私聊消息
-  ├ /发送群消息 群号 内容 - 发送群消息
-  └ /删除好友 QQ号 - 删除指定QQ好友（需配置启用）
-
-💡 使用说明：
-  • 发送消息功能仅SUPERUSER可用
-  • 删除好友功能默认关闭，需配置启用
-  • 支持发送文本消息到指定私聊或群聊
-━━━━━━━━━━━━━━━━
-👈 返回主菜单：/QQEss帮助
-Ciallo～(∠・ω< )⌒★"""
-    
-    await help_msg_command.send(help_text)
-
-@help_group_command.handle()
-async def handle_help_group(bot: Bot, event: MessageEvent):
-    """显示群组管理功能帮助"""
-    help_text = """🏷️ 群组管理功能详细说明
-━━━━━━━━━━━━━━━━
-📝 加群管理：
-  ├ 加群请求推送 - 向配置的目标群推送对应群的加群请求（需配置启用）
-  ├ /同意加群请求 - 引用加群请求消息回复（群管理员可用）
-  └ /拒绝加群请求 [理由] - 引用加群请求消息回复（群管理员可用）
-
-👥 成员管理：
-  ├ /踹 @用户|QQ号 [群号] - 踢出指定用户（SUPERUSER权限）
-  ├ /禁言 @用户|QQ号 [群号] 时间 - 禁言指定用户（SUPERUSER权限）
-  ├ /解禁 @用户|QQ号 [群号] - 解除禁言指定用户（SUPERUSER权限）
-  ├ /全群禁言 - 开启全群禁言（SUPERUSER权限）
-  └ /全群解禁 - 关闭全群禁言（SUPERUSER权限）
-
-👑 权限管理：
-  ├ /设置管理员 @用户|QQ号 [群号] - 设置群管理员（SUPERUSER权限）
-  ├ /取消管理员 @用户|QQ号 [群号] - 取消群管理员（SUPERUSER权限）
-  ├ /设置头衔 @用户|QQ号 头衔名 - 设置群头衔（SUPERUSER权限，需群主）
-  └ /取消头衔 @用户|QQ号 - 取消群头衔（SUPERUSER权限，需群主）
-
-🚪 群聊管理：
-  └ /退群 群号 - 退出指定群聊（SUPERUSER权限）
-
-� 使用说明：
-  • 大部分功能仅SUPERUSER可用
-  • 头衔设置需要机器人为群主
-  • 支持@用户或直接输入QQ号
-  • 私聊中使用需要提供群号参数
-━━━━━━━━━━━━━━━━
-👈 返回主菜单：/QQEss帮助
-Ciallo～(∠・ω< )⌒★"""
-
-    await help_group_command.send(help_text)
-
-@help_status_command.handle()
-async def handle_help_status(bot: Bot, event: MessageEvent):
-    """显示状态设置功能帮助"""
-    help_text = """🔧 状态设置功能详细说明
-━━━━━━━━━━━━━━━━
-📋 基础用法：
-  ├ /状态设置 - 查看基础状态
-  ├ /状态设置 基础 - 基础状态
-  ├ /状态设置 娱乐 - 娱乐状态
-  ├ /状态设置 学习工作 - 学习工作状态  
-  ├ /状态设置 生活 - 生活状态
-  ├ /状态设置 情绪 - 情绪状态
-  ├ /状态设置 特殊 - 特殊状态
-  └ /状态设置 其他 - 其他状态
-
-⚡ 高级用法：
-  ├ /状态设置 电量 - 电量状态说明
-  ├ /状态设置 50 [1-100] - 设置电量
-  ├ /状态设置 数字 - 用编号设置状态
-  └ /状态设置 状态名 - 用名称设置状态
-
-💡 使用说明：
-  • 支持40+种个性状态，分类查看更方便
-  • 可按分类浏览或直接输入状态名
-  • 支持设置电量状态（1-100）
-  • 支持数字编号快速设置
-━━━━━━━━━━━━━━━━
-👈 返回主菜单：/QQEss帮助
-Ciallo～(∠・ω< )⌒★"""
-    
-    await help_status_command.send(help_text)

@@ -7,12 +7,13 @@ from datetime import datetime
 from typing import Dict, List, Optional, Union
 from pathlib import Path
 
-from nonebot import on_command, get_bot, get_plugin_config
+from nonebot import on_command, get_bot, get_plugin_config, get_driver
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, PrivateMessageEvent
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.message import event_postprocessor
 from nonebot.log import logger
+from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 
 from .config import Config
@@ -365,12 +366,12 @@ lexicon_manager = LexiconManager(os.path.join(config.data_path, "lexicon"))
 
 # 词条添加命令
 add_lexicon = on_command("添加词条", priority=5, block=True)
-add_global_lexicon = on_command("全局添加词条", priority=5, block=True)
+add_global_lexicon = on_command("全局添加词条", priority=5, block=True, permission=SUPERUSER)
 delete_lexicon_cmd = on_command("删除词条", priority=5, block=True)
-delete_global_lexicon = on_command("全局删除词条", priority=5, block=True)
-add_blacklist = on_command("添加词条黑名单", priority=5, block=True)
+delete_global_lexicon = on_command("全局删除词条", priority=5, block=True, permission=SUPERUSER)
+add_blacklist = on_command("添加词条黑名单", priority=5, block=True, permission=SUPERUSER)
 view_lexicon = on_command("查看词库", priority=5, block=True)
-view_global_lexicon = on_command("查看全局词库", priority=5, block=True)
+view_global_lexicon = on_command("查看全局词库", priority=5, block=True, permission=SUPERUSER)
 lexicon_help = on_command("词库帮助", aliases={"词条帮助"}, priority=10, block=True)
 
 # 使用事件后处理器来处理词条触发
@@ -539,9 +540,6 @@ async def handle_add_global_lexicon(bot: Bot, event: MessageEvent, matcher: Matc
     """处理全局添加词条命令"""
     user_id = event.user_id
     
-    # 检查是否为超级用户
-    if user_id not in config.superusers:
-        await matcher.finish("只有超级用户才能使用全局词条功能")    
     # 检查黑名单
     if lexicon_manager.is_blacklisted(user_id):
         return  # 静默处理，不发送任何消息
@@ -624,10 +622,6 @@ async def handle_delete_global_lexicon(bot: Bot, event: MessageEvent, matcher: M
     """处理全局删除词条命令"""
     user_id = event.user_id
     
-    # 检查是否为超级用户
-    if user_id not in config.superusers:
-        await matcher.finish("只有超级用户才能使用全局词条功能")
-    
     keyword = args.extract_plain_text().strip()
     if not keyword:
         await matcher.finish("请输入要删除的关键词")
@@ -643,10 +637,6 @@ async def handle_delete_global_lexicon(bot: Bot, event: MessageEvent, matcher: M
 async def handle_add_blacklist(bot: Bot, event: MessageEvent, matcher: Matcher, args: Message = CommandArg()):
     """处理添加词条黑名单命令"""
     user_id = event.user_id
-    
-    # 检查是否为超级用户
-    if user_id not in config.superusers:
-        await matcher.finish("只有超级用户才能使用此功能")
     
     target_qq = args.extract_plain_text().strip()
     if not target_qq.isdigit():
@@ -743,10 +733,6 @@ async def handle_view_lexicon(bot: Bot, event: MessageEvent, matcher: Matcher):
 async def handle_view_global_lexicon(bot: Bot, event: MessageEvent, matcher: Matcher):
     """处理查看全局词库命令"""
     user_id = event.user_id
-    
-    # 检查是否为超级用户
-    if user_id not in config.superusers:
-        await matcher.finish("只有超级用户才能查看全局词库")
     
     # 获取全局词库路径
     file_path = lexicon_manager.get_global_file_path()

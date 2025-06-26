@@ -23,9 +23,50 @@ async def check_group_admin_permission(bot: Bot, event: MessageEvent) -> bool:
         logger.error(f"检查群管理员权限失败: {e}")
         return False
 
+# 14. 设置精华消息功能
+def exact_match_rule(*keywords):
+    """精确匹配规则：只有消息完全等于关键词时才触发"""
+    async def _rule(event: MessageEvent) -> bool:
+        message_text = str(event.get_message()).strip()
+        return message_text in keywords
+    return _rule
+
 # 1. 发送群消息功能
 send_group_msg = on_command("发送群消息", priority=5, permission=SUPERUSER)
+# 2. 加群请求信息推送功能（可配置开关）
+group_request_handler = on_request(priority=10)
+# 3.1 同意加群请求功能
+approve_group_request = on_command("同意加群请求", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+# 3.2 拒绝加群请求功能
+reject_group_request = on_command("拒绝加群请求", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+# 4. 踹/踢用户功能
+kick_user = on_command("踹", aliases={"踢"}, priority=5, permission=SUPERUSER)
+# 5. 禁言/塞口球功能
+ban_user = on_command("禁言", aliases={"塞口球"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+# 6. 解禁功能
+unban_user = on_command("解禁", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+# 7. 全群禁言功能
+ban_all = on_command("全群禁言", aliases={"肃静"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+# 8. 全群解禁功能
+unban_all = on_command("全群解禁", aliases={"大赦天下"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+# 9. 设置管理员功能
+set_admin = on_command("设置管理员", priority=5, permission=SUPERUSER)
+# 10. 取消管理员功能
+unset_admin = on_command("取消管理员", priority=5, permission=SUPERUSER)
+# 11. 退群功能
+leave_group = on_command("退群", priority=5, permission=SUPERUSER)
+# 12. 设置头衔功能
+set_special_title = on_command("设置头衔", priority=5, permission=SUPERUSER)
+# 13. 取消头衔功能
+remove_special_title = on_command("取消头衔", priority=5, permission=SUPERUSER)
+# 14. 设置精华消息功能
+set_essence = on_message(rule=exact_match_rule("设置精华消息", "设精"), priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, block=True)
+# 15. 取消精华消息功能
+delete_essence = on_message(rule=exact_match_rule("取消精华消息", "取精"), priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, block=True)
 
+
+
+# 1
 @send_group_msg.handle()
 async def handle_send_group_msg(bot: Bot, event: MessageEvent):
     """发送群消息处理器"""
@@ -83,9 +124,8 @@ async def handle_send_group_msg(bot: Bot, event: MessageEvent):
         await send_group_msg.send(f"❌ 发送群消息失败：{error_msg}")
 
 
-# 2. 加群请求信息推送功能（可配置开关）
-group_request_handler = on_request(priority=10)
 
+# 2
 @group_request_handler.handle()
 async def handle_group_request_notify(bot: Bot, event: GroupRequestEvent):
     """处理加群请求，向对应群发送请求信息"""
@@ -133,11 +173,8 @@ async def handle_group_request_notify(bot: Bot, event: GroupRequestEvent):
             logger.error(f"向群 {group_id} 推送加群请求信息失败: {e}")
 
 
-# 3. 处理加群请求功能
 
-# 3.1 同意加群请求功能
-approve_group_request = on_command("同意加群请求", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
-
+# 3.1
 @approve_group_request.handle()
 async def handle_approve_group_request(bot: Bot, event: MessageEvent):
     """同意加群请求处理器"""
@@ -188,9 +225,8 @@ async def handle_approve_group_request(bot: Bot, event: MessageEvent):
         await approve_group_request.send(f"❌ 同意加群请求失败：{error_msg}")
 
 
-# 3.2 拒绝加群请求功能
-reject_group_request = on_command("拒绝加群请求", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
+# 3.2
 @reject_group_request.handle()
 async def handle_reject_group_request(bot: Bot, event: MessageEvent):
     """拒绝加群请求处理器"""
@@ -253,9 +289,8 @@ async def handle_reject_group_request(bot: Bot, event: MessageEvent):
         await reject_group_request.send(f"❌ 拒绝加群请求失败：{error_msg}")
 
 
-# 4. 踹/踢用户功能
-kick_user = on_command("踹", aliases={"踢"}, priority=5, permission=SUPERUSER)
 
+# 4
 @kick_user.handle()
 async def handle_kick_user(bot: Bot, event: MessageEvent):
     """踹/踢用户处理器"""
@@ -367,9 +402,8 @@ async def handle_kick_user(bot: Bot, event: MessageEvent):
         await kick_user.send(f"❌ 踢出用户失败：{error_msg}")
 
 
-# 5. 禁言/塞口球功能
-ban_user = on_command("禁言", aliases={"塞口球"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
+# 5
 @ban_user.handle()
 async def handle_ban_user(bot: Bot, event: MessageEvent):
     """禁言/塞口球用户处理器"""
@@ -498,9 +532,8 @@ async def handle_ban_user(bot: Bot, event: MessageEvent):
         await ban_user.send(f"❌ 禁言用户失败：{error_msg}")
 
 
-# 6. 解禁功能
-unban_user = on_command("解禁", priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
+# 6
 @unban_user.handle()
 async def handle_unban_user(bot: Bot, event: MessageEvent):
     """解禁用户处理器"""
@@ -602,9 +635,8 @@ async def handle_unban_user(bot: Bot, event: MessageEvent):
         await unban_user.send(f"❌ 解禁用户失败：{error_msg}")
 
 
-# 7. 全群禁言功能
-ban_all = on_command("全群禁言", aliases={"肃静"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
+# 7
 @ban_all.handle()
 async def handle_ban_all(bot: Bot, event: MessageEvent):
     """全群禁言处理器"""
@@ -628,9 +660,8 @@ async def handle_ban_all(bot: Bot, event: MessageEvent):
         await ban_all.send(f"❌ 全群禁言失败：{error_msg}")
 
 
-# 8. 全群解禁功能
-unban_all = on_command("全群解禁", aliases={"大赦天下"}, priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
+# 8
 @unban_all.handle()
 async def handle_unban_all(bot: Bot, event: MessageEvent):
     """全群解禁处理器"""
@@ -654,9 +685,8 @@ async def handle_unban_all(bot: Bot, event: MessageEvent):
         await unban_all.send(f"❌ 全群解禁失败：{error_msg}")
 
 
-# 9. 设置管理员功能
-set_admin = on_command("设置管理员", priority=5, permission=SUPERUSER)
 
+# 9
 @set_admin.handle()
 async def handle_set_admin(bot: Bot, event: MessageEvent):
     """设置管理员处理器"""
@@ -760,9 +790,8 @@ async def handle_set_admin(bot: Bot, event: MessageEvent):
         await set_admin.send(f"❌ 设置管理员失败：{error_msg}")
 
 
-# 10. 取消管理员功能
-unset_admin = on_command("取消管理员", priority=5, permission=SUPERUSER)
 
+# 10
 @unset_admin.handle()
 async def handle_unset_admin(bot: Bot, event: MessageEvent):
     """取消管理员处理器"""
@@ -865,9 +894,8 @@ async def handle_unset_admin(bot: Bot, event: MessageEvent):
         await unset_admin.send(f"❌ 取消管理员失败：{error_msg}")
 
 
-# 11. 退群功能
-leave_group = on_command("退群", priority=5, permission=SUPERUSER)
 
+# 11
 @leave_group.handle()
 async def handle_leave_group(bot: Bot, event: MessageEvent):
     """退群处理器"""
@@ -918,9 +946,8 @@ async def handle_leave_group(bot: Bot, event: MessageEvent):
         await leave_group.send(f"❌ 退群失败：{error_msg}")
 
 
-# 12. 设置头衔功能
-set_special_title = on_command("设置头衔", priority=5, permission=SUPERUSER)
 
+# 12
 @set_special_title.handle()
 async def handle_set_special_title(bot: Bot, event: MessageEvent):
     """设置头衔处理器"""
@@ -1019,9 +1046,8 @@ async def handle_set_special_title(bot: Bot, event: MessageEvent):
         await set_special_title.send(f"❌ 设置头衔失败：{error_msg}")
 
 
-# 13. 取消头衔功能
-remove_special_title = on_command("取消头衔", priority=5, permission=SUPERUSER)
 
+# 13
 @remove_special_title.handle()
 async def handle_remove_special_title(bot: Bot, event: MessageEvent):
     """取消头衔处理器"""
@@ -1106,16 +1132,8 @@ async def handle_remove_special_title(bot: Bot, event: MessageEvent):
         await remove_special_title.send(f"❌ 取消头衔失败：{error_msg}")
 
 
-# 14. 设置精华消息功能
-def exact_match_rule(*keywords):
-    """精确匹配规则：只有消息完全等于关键词时才触发"""
-    async def _rule(event: MessageEvent) -> bool:
-        message_text = str(event.get_message()).strip()
-        return message_text in keywords
-    return _rule
 
-set_essence = on_message(rule=exact_match_rule("设置精华消息", "设精"), priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, block=True)
-
+# 14
 @set_essence.handle()
 async def handle_set_essence(bot: Bot, event: MessageEvent):
     """设置精华消息处理器"""
@@ -1148,9 +1166,8 @@ async def handle_set_essence(bot: Bot, event: MessageEvent):
         # 错误时静默处理，不发送任何消息
 
 
-# 15. 取消精华消息功能
-delete_essence = on_message(rule=exact_match_rule("取消精华消息", "取精"), priority=5, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, block=True)
 
+# 15
 @delete_essence.handle()
 async def handle_delete_essence(bot: Bot, event: MessageEvent):
     """取消精华消息处理器"""

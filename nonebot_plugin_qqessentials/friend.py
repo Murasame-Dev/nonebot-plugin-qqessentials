@@ -6,10 +6,20 @@ from .config import Config
 
 # 创建配置实例
 config = get_plugin_config(Config)
+# 2.赞我功能 - 不需要指令头，不需要SUPERUSER权限
+async def like_me_rule(event: MessageEvent) -> bool:
+    """匹配"赞我"消息的规则"""
+    message_text = str(event.get_message()).strip()
+    return message_text == "赞我"
 
-# 发送私聊消息功能
+# 1.发送私聊消息功能 L23
 send_private_msg = on_command("发送私聊消息", priority=5, permission=SUPERUSER)
+# 2.赞我功能 L79
+like_me = on_message(rule=like_me_rule, priority=5)
+# 3.删除好友功能 L115
+delete_friend_cmd = on_command("删除好友", priority=5, permission=SUPERUSER)
 
+# 1
 @send_private_msg.handle()
 async def handle_send_private_msg(bot: Bot, event: MessageEvent):
     """发送私聊消息处理器"""
@@ -63,14 +73,9 @@ async def handle_send_private_msg(bot: Bot, event: MessageEvent):
         logger.error(f"发送私聊消息失败: {e}")
         await send_private_msg.send(f"❌ 发送私聊消息失败：{str(e)}")
 
-# 赞我功能 - 不需要指令头，不需要SUPERUSER权限
-async def like_me_rule(event: MessageEvent) -> bool:
-    """匹配"赞我"消息的规则"""
-    message_text = str(event.get_message()).strip()
-    return message_text == "赞我"
 
-like_me = on_message(rule=like_me_rule, priority=5)
 
+# 2
 @like_me.handle()
 async def handle_like_me(bot: Bot, event: MessageEvent):
     """处理赞我功能"""
@@ -104,9 +109,9 @@ async def handle_like_me(bot: Bot, event: MessageEvent):
         else:
             await like_me.send("今天已经为你点过赞了")  # 默认提示，因为大多数失败都是这个原因
 
-# 删除好友功能
-delete_friend_cmd = on_command("删除好友", priority=5, permission=SUPERUSER)
 
+
+# 3
 @delete_friend_cmd.handle()
 async def handle_delete_friend(bot: Bot, event: MessageEvent):
     """删除好友处理器"""    # 检查功能是否启用
