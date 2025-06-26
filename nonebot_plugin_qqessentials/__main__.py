@@ -454,45 +454,14 @@ delete_msg = on_command("撤回", aliases={"撤"}, priority=5, permission=SUPERU
 async def handle_delete_msg(bot: Bot, event: MessageEvent):
     """处理消息撤回 - 撤回被引用消息和源消息"""
     # 检查是否引用了消息
-    reply_msg = None
-    for segment in event.get_message():
-        if segment.type == "reply":
-            reply_msg = segment
-            break
-    
-    # 如果没有引用消息，不执行任何操作（静默失败）
-    if not reply_msg:
-        return
-    
-    try:
-        # 获取被引用消息的ID
-        replied_message_id = reply_msg.data.get("id")
-        if not replied_message_id:
+    if event.reply:
+        msg_id = event.reply.message_id
+        try:
+            await bot.delete_msg(message_id=msg_id)
             return
-        
-        # 先撤回被引用的消息
-        try:
-            await bot.call_api("delete_msg", message_id=replied_message_id)
-            logger.info(f"成功撤回被引用消息: {replied_message_id}")
         except Exception as e:
-            logger.error(f"撤回被引用消息失败: {e}")
-        
-        # 获取源消息（发出撤回指令的消息）的ID并撤回
-        try:
-            # 撤回源消息（撤回指令消息本身）
-            source_message_id = event.message_id
-            await bot.call_api("delete_msg", message_id=source_message_id)
-            logger.info(f"成功撤回源消息: {source_message_id}")
-        except Exception as e:
-            logger.error(f"撤回源消息失败: {e}")
-        
-        # 撤回成功后不发送任何消息（静默成功）
-        
-    except Exception as e:
-        # 撤回失败也不输出任何消息（静默失败）
-        logger.error(f"消息撤回过程出错: {e}")
-        pass
-
+            logger.error(f"消息撤回失败: {e}")
+            return
 
 # 6. 戳一戳功能
 # 自定义规则：匹配"戳我"（不需要指令头）
