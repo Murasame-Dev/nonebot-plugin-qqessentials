@@ -3,14 +3,18 @@
 <div align="center">
 
 <a href="https://v2.nonebot.dev/store">
-  <img src="./nbp_logo_qqess.png" width="180" height="180" alt="NoneBotPluginLogo">
+  <img src="./kawaii.jpg" alt="NoneBotPluginLogo">
 </a>
 
 <p>
   <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/template/plugin.svg" alt="NoneBotPluginText">
 </p>
 
-~~*别嘲笑我的构图了，我第一次做(T_T)*~~
+<p align="center">
+这些可爱的丛雨酱是来自<a href="https://x.com/uoouchan">@uoouchan</a>的！<br>
+これらの可愛いムラサメちゃんは<a href="https://x.com/uoouchan">@uoouchan</a>さんからのものです！<br>
+These adorable Murasame-chan are from <a href="https://x.com/uoouchan">@uoouchan</a>! 
+</p>
 
 # nonebot-plugin-QQEssentials
 
@@ -133,21 +137,21 @@ enable_group_request_notify=False
 group_request_notify_target=[]
 
 # === 随机禁言功能配置 ===
-    
+
 # 随机禁言功能开关（默认开启）
 # 环境变量：ENABLE_RANDOM_BAN
 enable_random_ban=True
-    
+
 # 随机口球/我要口球的时间范围（格式："最小时间-最大时间"，单位：秒，示例："5-60"）
 # 环境变量：RANDOM_BAN_TIME_RANGE
 random_ban_time_range="5-60"
-    
+
 # 禅定/精致睡眠的禁言时间（秒，默认36000秒=10小时）
 # 环境变量：LONG_BAN_TIME
 long_ban_time=36000
-    
+
 # === 词库功能配置 ===
-    
+
 # 词条添加等待超时时间（秒，默认60秒）
 # 环境变量：LEXICON_TIMEOUT
 lexicon_timeout=60
@@ -186,6 +190,12 @@ TG群组：[点此加入](https://t.me/LoveMurasame)
 ## 📝 更新日志
 
 芝士刚刚发布的插件，还没有更新日志的说 qwq~
+
+
+
+
+
+
 
 
 
