@@ -6,7 +6,8 @@ authors = [{ name = "Murasame", email = "congyu@sbhfy.cn" }]
 dependencies = [
     "nonebot2>=2.4.1",
     "nonebot-adapter-onebot>=2.4.6",
-    "httpx>=0.28.1"
+    "httpx>=0.28.1",
+    "aiosqlite>=0.17.0"
 ]
 requires-python = ">=3.9,<4.0"
 readme = "README.md"

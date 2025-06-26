@@ -1,5 +1,10 @@
 from typing import Any, Dict, Optional
 import asyncio
+import os
+import hashlib
+import httpx
+from datetime import datetime
+from pathlib import Path
 from nonebot import on_command, on_message, get_driver, get_plugin_config
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, MessageSegment, GroupMessageEvent, PrivateMessageEvent
 from nonebot.rule import to_me, Rule
@@ -8,9 +13,28 @@ from nonebot.matcher import Matcher
 from nonebot.log import logger
 from nonebot.permission import SUPERUSER
 from .config import Config
+from .database import get_collect_db
 
 # 创建配置实例
 config = get_plugin_config(Config)
+
+# 初始化收藏目录
+collect_path = Path(config.data_path) / "collect"
+collect_path.mkdir(parents=True, exist_ok=True)
+(collect_path / "images").mkdir(exist_ok=True)
+(collect_path / "voices").mkdir(exist_ok=True)
+
+# 初始化数据库
+driver = get_driver()
+
+@driver.on_startup
+async def init_database():
+    """初始化数据库"""
+    # 初始化收藏数据库
+    collect_db = get_collect_db(config.data_path)
+    await collect_db.init_db()
+    logger.info("收藏数据库初始化完成")
+
 # 3. 存储等待上传头像的用户
 waiting_avatar_users: Dict[int, bool] = {}
 # 6. 戳一戳功能
@@ -41,19 +65,21 @@ async def poke_cmd_rule(event: MessageEvent) -> bool:
 
 
 
-# 1. 机器人信息查询 L61
+# 1. 机器人信息查询
 robot_info = on_command("机器人信息", aliases={"机器人状态", "bot信息"}, priority=5, permission=SUPERUSER)
-# 2. 修改个性签名 L100
+# 2. 修改个性签名
 modify_signature = on_command("修改个性签名", priority=5, permission=SUPERUSER)
-# 3. 修改头像功能 L133
+# 3. 修改头像功能
 modify_avatar = on_command("修改头像", priority=5, permission=SUPERUSER)
-# 4. 在线状态设置 L371(主要) L208(我也不知道为什么要把这么长玩意写一起)
+# 4. 在线状态设置
 status_setting = on_command("状态设置", priority=5, permission=SUPERUSER)
-# 5. 消息撤回功能 L489
+# 5. 消息撤回功能
 delete_msg = on_command("撤回", aliases={"撤"}, priority=5, permission=SUPERUSER)
-# 6. 戳一戳功能 L510
+# 6. 戳一戳功能
 poke_me = on_message(rule=poke_me_rule, priority=5)
 poke_cmd = on_message(rule=poke_cmd_rule, priority=5)
+# 7. 收藏功能
+collect_msg = on_command("收藏", priority=5, permission=SUPERUSER)
 
 
 
@@ -586,3 +612,127 @@ async def handle_poke_cmd(bot: Bot, event: MessageEvent):
         logger.error(f"戳一戳失败: {e}")
         # 失败也不发送错误消息，保持静默
         pass
+
+# 7
+async def save_media_file(url: str, file_type: str, filename: str) -> bool:
+    """保存媒体文件到本地"""
+    try:
+        if url.startswith('base64://'):
+            # 处理 base64 编码的文件
+            import base64
+            base64_data = url.replace('base64://', '')
+            try:
+                file_data = base64.b64decode(base64_data)
+                file_path = collect_path / file_type / filename
+                with open(file_path, 'wb') as f:
+                    f.write(file_data)
+                logger.info(f"成功保存base64文件: {filename}")
+                return True
+            except Exception as e:
+                logger.error(f"保存base64文件失败: {e}")
+                return False
+        
+        elif url.startswith('file://') or Path(url).exists():
+            # 处理本地文件
+            import shutil
+            source_path = Path(url.replace('file://', '')) if url.startswith('file://') else Path(url)
+            if source_path.exists():
+                file_path = collect_path / file_type / filename
+                shutil.copy2(source_path, file_path)
+                logger.info(f"成功复制本地文件: {filename}")
+                return True
+            else:
+                logger.error(f"本地文件不存在: {source_path}")
+                return False
+        
+        else:
+            # 网络文件，下载
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url)
+                if response.status_code == 200:
+                    file_path = collect_path / file_type / filename
+                    with open(file_path, 'wb') as f:
+                        f.write(response.content)
+                    logger.info(f"成功下载文件: {filename}")
+                    return True
+                else:
+                    logger.error(f"下载文件失败，状态码: {response.status_code}")
+                    return False
+    except Exception as e:
+        logger.error(f"保存媒体文件时出错: {e}")
+        return False
+
+@collect_msg.handle()
+async def handle_collect_msg(bot: Bot, event: MessageEvent):
+    """处理收藏消息功能"""
+    # 检查是否引用了消息
+    if not event.reply:
+        return  # 静默处理，不发送消息
+    
+    try:
+        # 获取被引用的消息
+        reply_message = event.reply.message
+        user_qq = str(event.user_id)
+        current_date = datetime.now().strftime("%Y%m%d")
+        current_time = datetime.now().strftime("%H%M%S")
+        
+        # 检查消息类型并收藏
+        has_image = False
+        has_voice = False
+        has_text = False
+        text_content = ""
+        saved_files = []
+        
+        for segment in reply_message:
+            if segment.type == "image":
+                has_image = True
+                url = segment.data.get("url") or segment.data.get("file")
+                if url:
+                    # 生成文件名：QQ号-日期-时间.jpg
+                    filename = f"{user_qq}-{current_date}-{current_time}.jpg"
+                    if await save_media_file(url, "images", filename):
+                        saved_files.append(f"图片: {filename}")
+            
+            elif segment.type == "record":
+                has_voice = True
+                url = segment.data.get("url") or segment.data.get("file")
+                if url:
+                    # 生成文件名：QQ号-日期-时间.silk
+                    filename = f"{user_qq}-{current_date}-{current_time}.silk"
+                    if await save_media_file(url, "voices", filename):
+                        saved_files.append(f"语音: {filename}")
+            
+            elif segment.type == "text":
+                text_content += segment.data.get("text", "")
+        
+        # 检查是否有文本内容
+        if text_content.strip():
+            has_text = True
+        
+        # 将文本消息存储到数据库
+        if has_text:
+            db = get_collect_db(config.data_path)
+            await db.add_collect_message(user_qq, text_content.strip())
+        
+        # 根据消息类型发送不同的回复（使用配置中的消息）
+        if has_image and has_text:
+            # 图片+文本混合类型
+            response = config.collect_image_text_reply
+        elif has_voice:
+            response = config.collect_voice_reply
+        elif has_image:
+            response = config.collect_image_reply
+        elif has_text:
+            response = config.collect_text_reply
+        else:
+            response = config.collect_default_reply
+        
+        # 记录收藏信息到日志
+        if saved_files:
+            logger.info(f"用户 {event.user_id} 收藏了: {', '.join(saved_files)}")
+        
+        await collect_msg.send(response)
+        
+    except Exception as e:
+        logger.error(f"收藏消息失败: {e}")
+        await collect_msg.send(f"❌ 收藏失败：{str(e)}")

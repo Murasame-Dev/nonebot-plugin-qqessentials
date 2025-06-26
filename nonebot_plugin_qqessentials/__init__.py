@@ -10,7 +10,7 @@ from . import lexicon as lexicon
 
 from .config import Config
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 __plugin_meta__ = PluginMetadata(
     name="QQEssentials",
     description="一个能够满足你很多需求的基础插件！",

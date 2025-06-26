@@ -46,3 +46,25 @@ class Config(BaseModel):
     # 词条添加等待超时时间（秒，默认60秒）
     # 环境变量：LEXICON_TIMEOUT
     lexicon_timeout: int = 60
+    
+    # === 收藏功能配置 ===
+    
+    # 收藏语音时的回复消息
+    # 环境变量：COLLECT_VOICE_REPLY
+    collect_voice_reply: str = "此等天籁之音我收下了！Ciallo～(∠・ω< )⌒★"
+    
+    # 收藏图片时的回复消息
+    # 环境变量：COLLECT_IMAGE_REPLY
+    collect_image_reply: str = "那我就收下这张好图了！Ciallo～(∠・ω< )⌒★"
+    
+    # 收藏文本消息时的回复消息
+    # 环境变量：COLLECT_TEXT_REPLY
+    collect_text_reply: str = "我喜欢这条消息！Ciallo～(∠・ω< )⌒★"
+    
+    # 收藏图片+文本混合消息时的回复消息
+    # 环境变量：COLLECT_IMAGE_TEXT_REPLY
+    collect_image_text_reply: str = "此等好图及佳话我就收下了！Ciallo～(∠・ω< )⌒★"
+    
+    # 收藏成功时的默认回复消息
+    # 环境变量：COLLECT_DEFAULT_REPLY
+    collect_default_reply: str = "收藏成功！Ciallo～(∠・ω< )⌒★"
