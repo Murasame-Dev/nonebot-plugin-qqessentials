@@ -452,7 +452,7 @@ delete_msg = on_command("撤回", aliases={"撤"}, priority=5, permission=SUPERU
 
 @delete_msg.handle()
 async def handle_delete_msg(bot: Bot, event: MessageEvent):
-    """处理消息撤回"""
+    """处理消息撤回 - 撤回被引用消息和源消息"""
     if event.message_id:
         try:
             # 连同命令一起删掉
